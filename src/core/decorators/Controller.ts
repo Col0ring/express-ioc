@@ -1,4 +1,5 @@
 import { Router, Request, Response, RouterOptions } from 'express'
+import path from 'path'
 import { MiddlewareCallback, Method, Constructor } from '../type'
 import {
   INJECT_KEY,
@@ -20,6 +21,10 @@ export function createRouter(
   router = Router(rest)
   globalPrefix = typeof prefix === 'string' ? prefix : ''
   return router
+}
+
+export function setGlobalPrefix(prefix: string = '/') {
+  globalPrefix = typeof prefix === 'string' ? prefix : ''
 }
 
 const createConstructor = <T = any>(target: Constructor<T>): T => {
@@ -59,17 +64,15 @@ export function Controller(prefix = '/') {
       if (typeof controller[key] !== 'function') {
         return
       }
-      const path = Reflect.getMetadata(PATH_KEY, controller, key)
+      const currentPath = Reflect.getMetadata(PATH_KEY, controller, key)
       const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
       const middlewares: MiddlewareCallback[] =
         Reflect.getMetadata(MIDDLEWARES_KEY, controller, key) || []
       const exception =
         Reflect.getMetadata(EXCEPTION_KEY, controller, key) || (() => {})
 
-      const realPath = ('/' + globalPrefix + '/' + prefix + '/' + path).replace(
-        /\/+/g,
-        '/'
-      )
+      // fix the prefix
+      const url = path.join('/' + globalPrefix, prefix, currentPath)
       const handler = controller[key].bind(controller)
 
       const hadnlerWrapper = (req: Request, res: Response) => {
@@ -83,7 +86,7 @@ export function Controller(prefix = '/') {
         }
       }
       router?.[method](
-        realPath,
+        url,
         ...middlewares,
         ...controllerMiddlewares,
         hadnlerWrapper,

@@ -1,7 +1,7 @@
 import express, { RouterOptions, Router } from 'express'
 import path from 'path'
 import fs from 'fs'
-import { createRouter } from './decorators'
+import { createRouter, setGlobalPrefix } from './decorators'
 import { MiddlewareCallback } from './type'
 
 export class Application {
@@ -35,6 +35,11 @@ export class Application {
     }
     initControllers()
   }
+
+  setGlobalPrefix(prefix: string) {
+    setGlobalPrefix(prefix)
+  }
+
   useGlobalMiddleware(middleware: MiddlewareCallback) {
     this.app.use(middleware)
   }
