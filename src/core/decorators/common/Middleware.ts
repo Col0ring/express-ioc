@@ -1,5 +1,5 @@
-import { MiddlewareCallback } from '../type'
-import { MIDDLEWARES_KEY, CONTROLLER_MIDDLEWARES_KEY } from './constants'
+import { MiddlewareCallback } from '../../type'
+import { MIDDLEWARES_KEY, CONTROLLER_MIDDLEWARES_KEY } from '../constants'
 
 export function Middleware(callback: MiddlewareCallback) {
   return function (target: any, key?: string) {

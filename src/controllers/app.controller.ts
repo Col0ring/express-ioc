@@ -31,7 +31,14 @@ export default class AppController {
   @Get('app')
   // method exception capture
   @Exception()
-  getHellp(req: Request, res: Response) {
+  getHello(req: Request, res: Response) {
     return this.appService.getHello()
+  }
+
+  @Get('photos')
+  // method exception capture
+  @Exception()
+  getPhotos(req: Request, res: Response) {
+    return this.appService.getPhotos()
   }
 }

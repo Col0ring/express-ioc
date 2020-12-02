@@ -1,5 +1,5 @@
-import { Method } from '../type'
-import { PATH_KEY, METHOD_KEY } from './constants'
+import { Method } from '../../type'
+import { PATH_KEY, METHOD_KEY } from '../constants'
 function getMethodDecorator(type: Method) {
   return function (path: string = '/') {
     return function (target: any, key: string) {

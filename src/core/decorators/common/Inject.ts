@@ -1,4 +1,4 @@
-import { INJECT_KEY } from './constants'
+import { INJECT_KEY } from '../constants'
 // Inject value
 // property
 // only can inject by constructor params

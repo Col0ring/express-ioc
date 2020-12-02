@@ -1,5 +1,5 @@
 import { ErrorRequestHandler } from 'express'
-import { EXCEPTION_KEY, CONTROLLER_EXCEPTION_KEY } from './constants'
+import { EXCEPTION_KEY, CONTROLLER_EXCEPTION_KEY } from '../constants'
 export function Exception() {
   return function (target: any, key?: string) {
     const errorMiddleware: ErrorRequestHandler = function (
@@ -8,9 +8,9 @@ export function Exception() {
       res,
       next
     ) {
-      const status = err.status || 200
+      const status = err.status || 500
       const data = err.data
-      const message = err.message
+      const message = err.message || 'Server Error'
       // 设置状态码为500
       res.status(status).send({
         status,

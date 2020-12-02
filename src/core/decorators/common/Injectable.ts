@@ -1,4 +1,4 @@
-import { INJECTABLE_KEY } from './constants'
+import { INJECTABLE_KEY } from '../constants'
 // class
 export function Injectable() {
   return function (target: any) {

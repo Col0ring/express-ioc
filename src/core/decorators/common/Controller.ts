@@ -1,6 +1,6 @@
 import { Router, Request, Response, RouterOptions } from 'express'
 import path from 'path'
-import { MiddlewareCallback, Method, Constructor } from '../type'
+import { MiddlewareCallback, Method, Constructor } from '../../type'
 import {
   INJECT_KEY,
   INJECTABLE_KEY,
@@ -10,7 +10,7 @@ import {
   PATH_KEY,
   MIDDLEWARES_KEY,
   CONTROLLER_MIDDLEWARES_KEY
-} from './constants'
+} from '../constants'
 
 let router: Router | null = null
 let globalPrefix: string = ''
@@ -19,15 +19,15 @@ export function createRouter(
 ) {
   const { prefix, ...rest } = options
   router = Router(rest)
-  globalPrefix = typeof prefix === 'string' ? prefix : ''
+  globalPrefix = typeof prefix === 'string' ? prefix : globalPrefix
   return router
 }
 
 export function setGlobalPrefix(prefix: string = '/') {
-  globalPrefix = typeof prefix === 'string' ? prefix : ''
+  globalPrefix = typeof prefix === 'string' ? prefix : globalPrefix
 }
 
-const createConstructor = <T = any>(target: Constructor<T>): T => {
+function createConstructor<T = any>(target: Constructor<T>): T {
   // 获取所有注入的服务
   const providers: any[] =
     Reflect.getMetadata('design:paramtypes', target) || [] // [OtherService]
@@ -49,6 +49,21 @@ const createConstructor = <T = any>(target: Constructor<T>): T => {
     }
   })
   return new target(...args)
+}
+
+// 获取异步的错误或数据
+function getPromiseResult(value: any) {
+  return new Promise((resolve, reject) => {
+    if (value instanceof Promise) {
+      value
+        .then((res) => {
+          resolve(getPromiseResult(res))
+        })
+        .catch(reject)
+    } else {
+      resolve(value)
+    }
+  })
 }
 
 export function Controller(prefix = '/') {
@@ -79,7 +94,20 @@ export function Controller(prefix = '/') {
         try {
           const result = handler(req, res)
           if (!res.headersSent) {
-            res.send(result)
+            getPromiseResult(result)
+              .then((value) => {
+                res.send(value)
+              })
+              .catch((err) => {
+                // 必须要重新获取，不然会因为闭包而为空函数
+                const exceptionHandler = Reflect.getMetadata(
+                  CONTROLLER_EXCEPTION_KEY,
+                  target
+                )
+                exceptionHandler
+                  ? exceptionHandler(err, req, res, () => {})
+                  : res.status(500).send(err.stack || 'Server Error')
+              })
           }
         } catch (err) {
           throw err

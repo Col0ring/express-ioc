@@ -1,7 +1,10 @@
 // alias
 import 'module-alias/register'
 import { Application } from '@/core'
-const app = new Application({})
+import dbConfig from '@/config/db'
+const app = new Application({
+  dbConfig
+})
 
 app.setGlobalPrefix('/api')
 
