@@ -9,7 +9,9 @@ import {
   METHOD_KEY,
   PATH_KEY,
   MIDDLEWARES_KEY,
-  CONTROLLER_MIDDLEWARES_KEY
+  CONTROLLER_MIDDLEWARES_KEY,
+  POST_CONTROLLER_MIDDLEWARES_KEY,
+  POST_MIDDLEWARES_KEY
 } from '../constants'
 
 let router: Router | null = null
@@ -73,6 +75,9 @@ export function Controller(prefix = '/') {
     const controllerMiddlewares =
       Reflect.getMetadata(CONTROLLER_MIDDLEWARES_KEY, target) || []
 
+    const postControllerMiddlewares =
+      Reflect.getMetadata(POST_CONTROLLER_MIDDLEWARES_KEY, target) || []
+
     const controller = createConstructor(target)
 
     for (const key in target.prototype) {
@@ -83,6 +88,9 @@ export function Controller(prefix = '/') {
       const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
       const middlewares: MiddlewareCallback[] =
         Reflect.getMetadata(MIDDLEWARES_KEY, controller, key) || []
+
+      const postMiddlewares: MiddlewareCallback[] =
+        Reflect.getMetadata(POST_MIDDLEWARES_KEY, controller, key) || []
       const exception =
         Reflect.getMetadata(EXCEPTION_KEY, controller, key) || (() => {})
 
@@ -116,9 +124,11 @@ export function Controller(prefix = '/') {
 
       router?.[method](
         url,
-        ...middlewares,
         ...controllerMiddlewares,
+        ...middlewares,
         hadnlerWrapper,
+        ...postMiddlewares,
+        ...postControllerMiddlewares,
         exception,
         controllerException
       )

@@ -6,8 +6,8 @@ import { authMiddleware } from '@/middlewares/auth.middleware'
 
 // controller exception capture
 @Controller()
-@Middleware(authMiddleware)
 @Exception()
+@Middleware(authMiddleware)
 export class AppController {
   constructor(
     @Inject(Example2Sevice) private readonly Example2Sevice: Example2Sevice,
