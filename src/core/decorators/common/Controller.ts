@@ -99,11 +99,11 @@ export function Controller(prefix = '/') {
                 res.send(value)
               })
               .catch((err) => {
-                // 必须要重新获取，不然会因为闭包而为空函数
-                const exceptionHandler = Reflect.getMetadata(
-                  CONTROLLER_EXCEPTION_KEY,
-                  target
-                )
+                // 内部的 exception 可以不用重新获取，但是外部必须重新获取
+                const exceptionHandler =
+                  Reflect.getMetadata(EXCEPTION_KEY, controller, key) ||
+                  Reflect.getMetadata(CONTROLLER_EXCEPTION_KEY, target)
+
                 exceptionHandler
                   ? exceptionHandler(err, req, res, () => {})
                   : res.status(500).send(err.stack || 'Server Error')
@@ -113,6 +113,7 @@ export function Controller(prefix = '/') {
           throw err
         }
       }
+
       router?.[method](
         url,
         ...middlewares,

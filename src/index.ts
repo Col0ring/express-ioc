@@ -1,7 +1,7 @@
 // alias
 import 'module-alias/register'
 import { Application } from '@/core'
-import dbConfig from '@/config/db'
+import { dbConfig } from '@/config/db'
 const app = new Application({
   dbConfig
 })

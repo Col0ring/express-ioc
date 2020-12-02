@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 import { Controller, Get, Middleware, Exception, Success, Inject } from '@/core'
 import { AppSevice } from '@/services/app.service'
 import { Example2Sevice } from '@/services/example2.service'
+import { authMiddleware } from '@/middlewares/auth.middleware'
 
 // controller exception capture
-@Exception()
 @Controller()
-export default class AppController {
+@Middleware(authMiddleware)
+@Exception()
+export class AppController {
   constructor(
     @Inject(Example2Sevice) private readonly Example2Sevice: Example2Sevice,
     private readonly appService: AppSevice
@@ -17,7 +19,7 @@ export default class AppController {
     console.log('middleware')
     next()
   })
-  home(req: Request, res: Response) {
+  async home(req: Request, res: Response) {
     throw new Success()
   }
 
