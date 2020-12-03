@@ -1,6 +1,12 @@
-import { Router, Request, Response, RouterOptions } from 'express'
+import { Router, Request, Response } from 'express'
 import path from 'path'
-import { MiddlewareCallback, Method, Constructor } from '../../type'
+import { getPromiseResult } from '../../utils'
+import {
+  MiddlewareCallback,
+  Method,
+  Constructor,
+  ApplicationRouterOptions
+} from '../../type'
 import {
   INJECT_KEY,
   INJECTABLE_KEY,
@@ -16,9 +22,7 @@ import {
 
 let router: Router | null = null
 let globalPrefix: string = ''
-export function createRouter(
-  options: RouterOptions & { prefix?: string } = {}
-) {
+export function createRouter(options: ApplicationRouterOptions = {}) {
   const { prefix, ...rest } = options
   router = Router(rest)
   globalPrefix = typeof prefix === 'string' ? prefix : globalPrefix
@@ -53,21 +57,6 @@ function createConstructor<T = any>(target: Constructor<T>): T {
   return new target(...args)
 }
 
-// 获取异步的错误或数据
-function getPromiseResult(value: any) {
-  return new Promise((resolve, reject) => {
-    if (value instanceof Promise) {
-      value
-        .then((res) => {
-          resolve(getPromiseResult(res))
-        })
-        .catch(reject)
-    } else {
-      resolve(value)
-    }
-  })
-}
-
 export function Controller(prefix = '/') {
   return function (target: any) {
     const controllerException =
@@ -98,7 +87,7 @@ export function Controller(prefix = '/') {
       const url = path.join('/' + globalPrefix, prefix, currentPath)
       const handler = controller[key].bind(controller)
 
-      const hadnlerWrapper = (req: Request, res: Response) => {
+      const handlerWrapper = (req: Request, res: Response) => {
         try {
           const result = handler(req, res)
           if (!res.headersSent) {
@@ -126,7 +115,7 @@ export function Controller(prefix = '/') {
         url,
         ...controllerMiddlewares,
         ...middlewares,
-        hadnlerWrapper,
+        handlerWrapper,
         ...postMiddlewares,
         ...postControllerMiddlewares,
         exception,

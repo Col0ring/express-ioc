@@ -1,7 +1,6 @@
-import { EntitySchema, getConnection } from 'typeorm'
+import { getConnection } from 'typeorm'
 import { INJECT_KEY } from '../constants'
-
-type EntityClassOrSchema = Function | EntitySchema
+import { EntityClassOrSchema } from '../../type'
 
 // Inject Repository
 export function InjectRepository(

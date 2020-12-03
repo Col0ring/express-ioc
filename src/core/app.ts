@@ -1,19 +1,14 @@
-import express, { RouterOptions, Router } from 'express'
-import {
-  createConnection,
-  ConnectionOptions,
-  Connection,
-  createConnections
-} from 'typeorm'
+import express, { Router } from 'express'
+import { createConnection, Connection, createConnections } from 'typeorm'
 import path from 'path'
 import fs from 'fs'
 import { createRouter, setGlobalPrefix } from './decorators'
-import { MiddlewareCallback } from './type'
-
-export interface ApplicationOptions extends RouterOptions {
-  prefix?: string
-  dbConfig?: ConnectionOptions | ConnectionOptions[]
-}
+import {
+  MiddlewareCallback,
+  ApplicationOptions,
+  ApplicationRouterOptions,
+  DatabaseConfig
+} from './type'
 
 export class Application {
   private app = express()
@@ -31,7 +26,7 @@ export class Application {
     this.initControllers()
   }
 
-  private initRouter(options?: RouterOptions & { prefix?: string }) {
+  private initRouter(options?: ApplicationRouterOptions) {
     const router = createRouter(options)
     this.useGlobalMiddleware(router)
     return router
@@ -70,9 +65,7 @@ export class Application {
   }
 
   // function reload
-  private async initDatabase(
-    dbConfig: ConnectionOptions | ConnectionOptions[]
-  ) {
+  private async initDatabase(dbConfig: DatabaseConfig) {
     this.closeConnection()
     if (Array.isArray(dbConfig)) {
       this.connections = await createConnections(dbConfig)
@@ -92,7 +85,7 @@ export class Application {
   }
 
   listen(port: number, callback?: () => void) {
-    this.app.listen(port, callback)
+    return this.app.listen(port, callback)
   }
   getExpressApp() {
     return this.app

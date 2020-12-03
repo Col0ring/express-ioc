@@ -1,7 +1,7 @@
-import { ConnectionOptions } from 'typeorm'
 import path from 'path'
+import { DatabaseConfig } from '@/core'
 
-export const dbConfig: ConnectionOptions | ConnectionOptions[] = {
+export const dbConfig: DatabaseConfig = {
   type: 'mysql',
   host: 'localhost',
   port: 3306,
