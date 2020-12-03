@@ -15,6 +15,7 @@ export function getPromiseResult(value: any) {
   })
 }
 
+// load  all files of the tatget directory
 export function loadFiles(parentPath: string) {
   if (fs.existsSync(parentPath)) {
     const files = fs.readdirSync(parentPath)
