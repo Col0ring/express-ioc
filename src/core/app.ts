@@ -1,7 +1,6 @@
 import express, { Router } from 'express'
 import { createConnection, Connection, createConnections } from 'typeorm'
 import path from 'path'
-import fs from 'fs'
 import { createRouter, setGlobalPrefix } from './decorators'
 import {
   MiddlewareCallback,
@@ -9,6 +8,7 @@ import {
   ApplicationRouterOptions,
   DatabaseConfig
 } from './type'
+import { loadFiles } from './utils'
 
 export class Application {
   private app = express()
@@ -32,23 +32,8 @@ export class Application {
     return router
   }
   private initControllers() {
-    function initControllers(
-      parentPath: string = path.resolve(__dirname, '../controllers')
-    ) {
-      if (fs.existsSync(parentPath)) {
-        const files = fs.readdirSync(parentPath)
-        files.forEach((file) => {
-          const currentPath = path.resolve(parentPath, file)
-          const stat = fs.statSync(currentPath)
-          if (stat.isDirectory()) {
-            initControllers(currentPath)
-          } else {
-            import(currentPath)
-          }
-        })
-      }
-    }
-    initControllers()
+    const parentPath = path.resolve(__dirname, '../controllers')
+    loadFiles(parentPath)
   }
 
   private closeConnection() {
@@ -64,7 +49,6 @@ export class Application {
     }
   }
 
-  // function reload
   private async initDatabase(dbConfig: DatabaseConfig) {
     this.closeConnection()
     if (Array.isArray(dbConfig)) {

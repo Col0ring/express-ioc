@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
-import { Controller, Get, Middleware, Exception, Success, Inject } from '@/core'
+import { Controller, Get, Middleware, Exception, Inject } from '@/core'
+import { Success } from '@/exceptions'
 import { AppSevice } from '@/services/app.service'
 import { Example2Sevice } from '@/services/example2.service'
 import { authMiddleware } from '@/middlewares/auth.middleware'

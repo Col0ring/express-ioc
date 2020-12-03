@@ -1,4 +1,6 @@
-// 获取异步的错误或数据
+import fs from 'fs'
+import path from 'path'
+// get Promise result or wrap the normal value
 export function getPromiseResult(value: any) {
   return new Promise((resolve, reject) => {
     if (value instanceof Promise) {
@@ -11,4 +13,19 @@ export function getPromiseResult(value: any) {
       resolve(value)
     }
   })
+}
+
+export function loadFiles(parentPath: string) {
+  if (fs.existsSync(parentPath)) {
+    const files = fs.readdirSync(parentPath)
+    files.forEach((file) => {
+      const currentPath = path.resolve(parentPath, file)
+      const stat = fs.statSync(currentPath)
+      if (stat.isDirectory()) {
+        loadFiles(currentPath)
+      } else {
+        import(currentPath)
+      }
+    })
+  }
 }

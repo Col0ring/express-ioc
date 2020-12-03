@@ -11,7 +11,7 @@ export function Exception() {
       const status = err.status || 500
       const data = err.data
       const message = err.message || 'Server Error'
-      // 设置状态码为500
+      // set status 500
       res.status(status).send({
         status,
         message,
