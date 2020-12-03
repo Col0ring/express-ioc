@@ -6,7 +6,10 @@ import { staticMiddlewate } from './middlewares/static.middleware'
 const app = new Application({
   dbConfig
 })
+
 app.setGlobalPrefix('/api')
+
+app.enableBodyParser()
 
 app.useGlobalMiddleware(staticMiddlewate('public'))
 

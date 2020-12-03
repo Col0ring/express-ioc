@@ -1,5 +1,7 @@
 import express, { Router } from 'express'
 import { createConnection, Connection, createConnections } from 'typeorm'
+import cors, { CorsOptions } from 'cors'
+import bodyParser from 'body-parser'
 import path from 'path'
 import { createRouter, setGlobalPrefix } from './decorators'
 import {
@@ -22,6 +24,7 @@ export class Application {
     if (dbConfig && typeof dbConfig === 'object') {
       await this.initDatabase(dbConfig)
     }
+
     this.router = this.initRouter(routerOptions)
     this.initControllers()
   }
@@ -79,5 +82,14 @@ export class Application {
   }
   getDatabaseConnections() {
     return this.connections
+  }
+
+  enableCors(options?: CorsOptions) {
+    this.useGlobalMiddleware(cors(options))
+  }
+
+  enableBodyParser() {
+    this.useGlobalMiddleware(bodyParser.json())
+    this.useGlobalMiddleware(bodyParser.urlencoded({ extended: false }))
   }
 }
