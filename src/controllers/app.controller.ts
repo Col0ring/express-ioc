@@ -8,7 +8,7 @@ import { authMiddleware } from '@/middlewares/auth.middleware'
 // controller exception capture
 @Controller()
 @Exception()
-@Middleware(authMiddleware)
+// @Middleware(authMiddleware)
 export class AppController {
   constructor(
     @Inject(Example2Sevice) private readonly Example2Sevice: Example2Sevice,
@@ -20,6 +20,10 @@ export class AppController {
     console.log('middleware')
     next()
   })
+  @Middleware((req, res, next) => {
+    console.log('middleware2')
+    next()
+  }, 'post')
   async home(req: Request, res: Response) {
     throw new Success()
   }

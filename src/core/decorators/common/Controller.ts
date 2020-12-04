@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import path from 'path'
 import { getPromiseResult } from '../../utils'
 import {
@@ -87,27 +87,29 @@ export function Controller(prefix = '/') {
       const url = path.join('/' + globalPrefix, prefix, currentPath)
       const handler = controller[key].bind(controller)
 
-      const handlerWrapper = (req: Request, res: Response) => {
+      const handlerWrapper = (
+        req: Request,
+        res: Response,
+        next: NextFunction
+      ) => {
         try {
           const result = handler(req, res)
           if (!res.headersSent) {
             getPromiseResult(result)
               .then((value) => {
                 res.send(value)
+                next()
               })
               .catch((err) => {
-                // 内部的 exception 可以不用重新获取，但是外部必须重新获取
-                const exceptionHandler =
-                  Reflect.getMetadata(EXCEPTION_KEY, controller, key) ||
-                  Reflect.getMetadata(CONTROLLER_EXCEPTION_KEY, target)
-
-                exceptionHandler
-                  ? exceptionHandler(err, req, res, () => {})
-                  : res.status(500).send(err.stack || 'Server Error')
+                next()
+                next(err)
               })
+          } else {
+            next()
           }
         } catch (err) {
-          throw err
+          next()
+          next(err)
         }
       }
 
