@@ -4,11 +4,11 @@ import { Success } from '@/exceptions'
 import { AppSevice } from '@/services/app.service'
 import { Example2Sevice } from '@/services/example2.service'
 import { authMiddleware } from '@/middlewares/auth.middleware'
+import { LogException } from '../decorators/log.decorator'
 
-// controller exception capture
 @Controller()
-@Exception()
-// @Middleware(authMiddleware)
+// controller exception capture
+@LogException
 export class AppController {
   constructor(
     @Inject(Example2Sevice) private readonly Example2Sevice: Example2Sevice,
@@ -30,7 +30,7 @@ export class AppController {
 
   @Get('example')
   // method exception capture
-  @Exception()
+  @Middleware(authMiddleware)
   getExample(req: Request, res: Response) {
     return this.Example2Sevice.getExample()
   }
