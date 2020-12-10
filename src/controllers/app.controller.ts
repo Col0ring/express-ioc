@@ -8,7 +8,7 @@ import { LogException } from '../decorators/log.decorator'
 
 @Controller()
 // controller exception capture
-@LogException
+@LogException()
 export class AppController {
   constructor(
     @Inject(Example2Sevice) private readonly Example2Sevice: Example2Sevice,
