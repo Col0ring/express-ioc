@@ -5,7 +5,8 @@ import {
   MiddlewareCallback,
   Method,
   Constructor,
-  ApplicationRouterOptions
+  ApplicationRouterOptions,
+  RequestValueType
 } from '../../type'
 import {
   INJECT_KEY,
@@ -14,10 +15,15 @@ import {
   EXCEPTION_KEY,
   METHOD_KEY,
   PATH_KEY,
-  MIDDLEWARES_KEY,
-  CONTROLLER_MIDDLEWARES_KEY,
-  POST_CONTROLLER_MIDDLEWARES_KEY,
-  POST_MIDDLEWARES_KEY
+  MIDDLEWARE_KEY,
+  CONTROLLER_MIDDLEWARE_KEY,
+  POST_CONTROLLER_MIDDLEWARE_KEY,
+  POST_MIDDLEWARE_KEY,
+  REQUEST_QUERY_KEY,
+  REQUEST_PARAM_KEY,
+  REQUEST_BODY_KEY,
+  REQUEST_KEY,
+  RESPONSE_KEY
 } from '../constants'
 
 let router: Router | null = null
@@ -61,11 +67,11 @@ export function Controller(prefix = '/') {
   return function (target: any) {
     const controllerException =
       Reflect.getMetadata(CONTROLLER_EXCEPTION_KEY, target) || (() => {})
-    const controllerMiddlewares =
-      Reflect.getMetadata(CONTROLLER_MIDDLEWARES_KEY, target) || []
+    const controllerMiddleware =
+      Reflect.getMetadata(CONTROLLER_MIDDLEWARE_KEY, target) || []
 
-    const postControllerMiddlewares =
-      Reflect.getMetadata(POST_CONTROLLER_MIDDLEWARES_KEY, target) || []
+    const postControllerMiddleware =
+      Reflect.getMetadata(POST_CONTROLLER_MIDDLEWARE_KEY, target) || []
 
     const controller = createConstructor(target)
 
@@ -74,26 +80,56 @@ export function Controller(prefix = '/') {
         return
       }
       const currentPath = Reflect.getMetadata(PATH_KEY, controller, key)
-      const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
-      const middlewares: MiddlewareCallback[] =
-        Reflect.getMetadata(MIDDLEWARES_KEY, controller, key) || []
 
-      const postMiddlewares: MiddlewareCallback[] =
-        Reflect.getMetadata(POST_MIDDLEWARES_KEY, controller, key) || []
+      const middleware: MiddlewareCallback[] =
+        Reflect.getMetadata(MIDDLEWARE_KEY, controller, key) || []
+
+      const postMiddleware: MiddlewareCallback[] =
+        Reflect.getMetadata(POST_MIDDLEWARE_KEY, controller, key) || []
       const exception =
         Reflect.getMetadata(EXCEPTION_KEY, controller, key) || (() => {})
+
+      // http
+      const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
+      const requests: number[] =
+        Reflect.getMetadata(REQUEST_KEY, controller, key) || []
+      const responses: number[] =
+        Reflect.getMetadata(RESPONSE_KEY, controller, key) || []
+      const requestQueries: RequestValueType[] =
+        Reflect.getMetadata(REQUEST_QUERY_KEY, controller, key) || []
+      const requestParams: RequestValueType[] =
+        Reflect.getMetadata(REQUEST_PARAM_KEY, controller, key) || []
+      const requestBodies: RequestValueType[] =
+        Reflect.getMetadata(REQUEST_BODY_KEY, controller, key) || []
 
       // fix the prefix
       const url = path.join('/' + globalPrefix, prefix, currentPath)
       const handler = controller[key].bind(controller)
-
       const handlerWrapper = (
         req: Request,
         res: Response,
         next: NextFunction
       ) => {
         try {
-          const result = handler(req, res)
+          const args: any[] = []
+
+          requests.forEach((index) => {
+            args[index] = req
+          })
+          responses.forEach((index) => {
+            args[index] = res
+          })
+
+          requestQueries.forEach(([index, name]) => {
+            args[index] = name ? req.query[name] : req.query
+          })
+          requestParams.forEach(([index, name]) => {
+            args[index] = name ? req.params[name] : req.params
+          })
+          requestBodies.forEach(([index, name]) => {
+            args[index] = name ? req.body[name] : req.body
+          })
+          const result = handler(...args)
           if (!res.headersSent) {
             getPromiseResult(result)
               .then((value) => {
@@ -115,11 +151,11 @@ export function Controller(prefix = '/') {
 
       router?.[method](
         url,
-        ...controllerMiddlewares,
-        ...middlewares,
+        ...controllerMiddleware,
+        ...middleware,
         handlerWrapper,
-        ...postMiddlewares,
-        ...postControllerMiddlewares,
+        ...postMiddleware,
+        ...postControllerMiddleware,
         exception,
         controllerException
       )

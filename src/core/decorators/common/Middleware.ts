@@ -1,9 +1,9 @@
 import { MiddlewareCallback } from '../../type'
 import {
-  MIDDLEWARES_KEY,
-  CONTROLLER_MIDDLEWARES_KEY,
-  POST_CONTROLLER_MIDDLEWARES_KEY,
-  POST_MIDDLEWARES_KEY
+  MIDDLEWARE_KEY,
+  CONTROLLER_MIDDLEWARE_KEY,
+  POST_CONTROLLER_MIDDLEWARE_KEY,
+  POST_MIDDLEWARE_KEY
 } from '../constants'
 
 export function Middleware(
@@ -13,29 +13,29 @@ export function Middleware(
   return function (target: any, key?: string) {
     if (key) {
       const metaDataKey =
-        position === 'post' ? POST_MIDDLEWARES_KEY : MIDDLEWARES_KEY
-      const middlewares: MiddlewareCallback[] =
+        position === 'post' ? POST_MIDDLEWARE_KEY : MIDDLEWARE_KEY
+      const middleware: MiddlewareCallback[] =
         Reflect.getMetadata(metaDataKey, target, key) || []
       if (Array.isArray(callback)) {
-        middlewares.push(...callback)
+        middleware.push(...callback)
       } else {
-        middlewares.push(callback)
+        middleware.push(callback)
       }
-      Reflect.defineMetadata(metaDataKey, middlewares, target, key)
+      Reflect.defineMetadata(metaDataKey, middleware, target, key)
     } else {
       const metaDataKey =
         position === 'post'
-          ? POST_CONTROLLER_MIDDLEWARES_KEY
-          : CONTROLLER_MIDDLEWARES_KEY
+          ? POST_CONTROLLER_MIDDLEWARE_KEY
+          : CONTROLLER_MIDDLEWARE_KEY
 
-      const controllerMiddlewares: MiddlewareCallback[] =
+      const controllerMiddleware: MiddlewareCallback[] =
         Reflect.getMetadata(metaDataKey, target) || []
       if (Array.isArray(callback)) {
-        controllerMiddlewares.push(...callback)
+        controllerMiddleware.push(...callback)
       } else {
-        controllerMiddlewares.push(callback)
+        controllerMiddleware.push(callback)
       }
-      Reflect.defineMetadata(metaDataKey, controllerMiddlewares, target)
+      Reflect.defineMetadata(metaDataKey, controllerMiddleware, target)
     }
   }
 }

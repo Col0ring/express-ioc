@@ -4,8 +4,11 @@ import { INJECT_KEY } from '../constants'
 // only can be injected by constructor params
 export function Inject(param: any) {
   return function (target: any, methodKey: string, index: number) {
-    const metadataValue = Reflect.getMetadata(INJECT_KEY, target) || {}
-    metadataValue[INJECT_KEY + index] = param
-    Reflect.defineMetadata(INJECT_KEY, metadataValue, target)
+    // constructor
+    if (typeof methodKey === 'undefined') {
+      const metadataValue = Reflect.getMetadata(INJECT_KEY, target) || {}
+      metadataValue[INJECT_KEY + index] = param
+      Reflect.defineMetadata(INJECT_KEY, metadataValue, target)
+    }
   }
 }

@@ -1,5 +1,16 @@
 import { Request, Response } from 'express'
-import { Controller, Get, Middleware, Exception, Inject } from '@/core'
+import {
+  Controller,
+  Get,
+  Middleware,
+  Exception,
+  Inject,
+  Query,
+  Param,
+  Body,
+  Req,
+  Res
+} from '@/core'
 import { Success } from '@/exceptions'
 import { AppSevice } from '@/services/app.service'
 import { Example2Sevice } from '@/services/example2.service'
@@ -38,7 +49,11 @@ export class AppController {
   @Get('app')
   // method exception capture
   @Exception()
-  getHello(req: Request, res: Response) {
+  getHello(
+    @Req() req: Request,
+    @Query('name') name: string,
+    @Res() res: Response
+  ) {
     return this.appService.getHello()
   }
 

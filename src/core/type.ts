@@ -9,6 +9,9 @@ export type Method =
   | 'patch'
   | 'options'
   | 'head'
+
+export type RequestValueType = [index: number, name?: string]
+
 export interface MiddlewareCallback {
   (req: Request, res: Response, next: NextFunction): void
 }
