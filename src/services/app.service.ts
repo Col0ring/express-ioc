@@ -1,15 +1,15 @@
 import { Injectable, InjectRepository } from '@/core'
-import { ExampleSevice } from './example.service'
+import { ExampleService } from './example.service'
 import { Photo } from '@/db/entity/Photo'
 import { Repository } from 'typeorm'
 @Injectable()
-export class AppSevice {
+export class AppService {
   constructor(
-    private readonly exampleSevice: ExampleSevice,
+    private readonly exampleService: ExampleService,
     @InjectRepository(Photo) private readonly phoneRepository: Repository<Photo>
   ) {}
   getHello() {
-    return this.exampleSevice.getExample()
+    return this.exampleService.getExample()
   }
   getPhotos() {
     // const photo = new Photo()

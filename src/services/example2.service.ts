@@ -1,4 +1,4 @@
-export class Example2Sevice {
+export class Example2Service {
   getExample() {
     return 'example2'
   }

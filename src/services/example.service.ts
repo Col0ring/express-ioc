@@ -1,7 +1,7 @@
 import { Injectable } from '@/core'
 
 @Injectable()
-export class ExampleSevice {
+export class ExampleService {
   getExample() {
     return 'example'
   }
