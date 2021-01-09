@@ -1,5 +1,5 @@
 import path from 'path'
-import { LogOptions } from '@/middlewares/log.middleware'
+import { LogOptions } from '@/middleware/log.middleware'
 
 const __DEV__ = process.env.NODE_ENV === 'production' ? false : true
 

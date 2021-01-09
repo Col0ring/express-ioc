@@ -14,7 +14,7 @@ import {
 import { Success } from '@/exceptions'
 import { AppSevice } from '@/services/app.service'
 import { Example2Sevice } from '@/services/example2.service'
-import { authMiddleware } from '@/middlewares/auth.middleware'
+import { authMiddleware } from '@/middleware/auth.middleware'
 import { LogException } from '../decorators/log.decorator'
 
 @Controller()
