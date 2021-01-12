@@ -25,3 +25,12 @@ export enum RequestProps {
   Body = 'body',
   None = ''
 }
+
+export const requestProps = [
+  { key: REQUEST_QUERY_KEY, prop: RequestProps.Query },
+  { key: REQUEST_QUERY_KEY, prop: RequestProps.Query },
+  { key: REQUEST_PARAM_KEY, prop: RequestProps.Param },
+  { key: REQUEST_BODY_KEY, prop: RequestProps.Body },
+  { key: REQUEST_HEADER_KEY, prop: RequestProps.Header },
+  { key: REQUEST_UPLOADED_FILE_KEY, prop: RequestProps.None }
+]
