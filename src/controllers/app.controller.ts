@@ -9,13 +9,17 @@ import {
   Param,
   Body,
   Req,
-  Res
+  Res,
+  Post,
+  UploadedFile
 } from '@/core'
 import { Success } from '@/exceptions'
 import { AppService } from '@/services/app.service'
 import { Example2Service } from '@/services/example2.service'
 import { authMiddleware } from '@/middleware/auth.middleware'
+import { fileMiddleware } from '@/middleware/file.middleware'
 import { LogException } from '../decorators/log.decorator'
+import { uploadConfig } from '@/config/upload'
 
 @Controller()
 // controller exception capture
@@ -44,6 +48,37 @@ export class AppController {
   @Middleware(authMiddleware)
   getExample(req: Request, res: Response) {
     return this.Example2Service.getExample()
+  }
+
+  @Post('upload')
+  @Middleware(
+    fileMiddleware({
+      method: {
+        type: 'single',
+        fileName: 'file'
+      },
+      storage: uploadConfig.storage
+    })
+  )
+  upload(@UploadedFile('file') file: Express.Multer.File) {
+    return {
+      file
+    }
+  }
+  @Post('uploads')
+  @Middleware(
+    fileMiddleware({
+      method: {
+        type: 'array',
+        fileName: 'file'
+      },
+      storage: uploadConfig.storage
+    })
+  )
+  uploads(@UploadedFile('files') files: Express.Multer.File[]) {
+    return {
+      files
+    }
   }
 
   @Get('app')

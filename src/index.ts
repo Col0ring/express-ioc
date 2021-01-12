@@ -13,6 +13,7 @@ app.setGlobalPrefix('/api')
 app.enableBodyParser()
 
 app.useGlobalMiddleware(staticMiddleware('public'))
+app.useGlobalMiddleware('/uploads', staticMiddleware('uploads'))
 app.useGlobalMiddleware(logMiddleware(accessLogConfig))
 
 app.listen(3000, () => {

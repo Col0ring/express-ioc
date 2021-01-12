@@ -23,7 +23,10 @@ import {
   REQUEST_PARAM_KEY,
   REQUEST_BODY_KEY,
   REQUEST_KEY,
-  RESPONSE_KEY
+  RESPONSE_KEY,
+  REQUEST_UPLOADED_FILE_KEY,
+  REQUEST_HEADER_KEY,
+  RequestProps
 } from '../constants'
 
 let router: Router | null = null
@@ -95,12 +98,21 @@ export function Controller(prefix = '/') {
         Reflect.getMetadata(REQUEST_KEY, controller, key) || []
       const responses: number[] =
         Reflect.getMetadata(RESPONSE_KEY, controller, key) || []
-      const requestQueries: RequestValueType[] =
-        Reflect.getMetadata(REQUEST_QUERY_KEY, controller, key) || []
-      const requestParams: RequestValueType[] =
-        Reflect.getMetadata(REQUEST_PARAM_KEY, controller, key) || []
-      const requestBodies: RequestValueType[] =
-        Reflect.getMetadata(REQUEST_BODY_KEY, controller, key) || []
+
+      const requestProps = [
+        { key: REQUEST_QUERY_KEY, prop: RequestProps.Query },
+        { key: REQUEST_PARAM_KEY, prop: RequestProps.Param },
+        { key: REQUEST_BODY_KEY, prop: RequestProps.Body },
+        { key: REQUEST_HEADER_KEY, prop: RequestProps.Header },
+        { key: REQUEST_UPLOADED_FILE_KEY, prop: RequestProps.None }
+      ]
+      const handlerParams = requestProps.map(({ key: propKey, prop }) => {
+        return {
+          data: (Reflect.getMetadata(propKey, controller, key) ||
+            []) as RequestValueType[],
+          prop
+        }
+      })
 
       // fix the prefix
       const url = path.join('/' + globalPrefix, prefix, currentPath)
@@ -112,23 +124,22 @@ export function Controller(prefix = '/') {
       ) => {
         try {
           const args: any[] = []
-
           requests.forEach((index) => {
             args[index] = req
           })
           responses.forEach((index) => {
             args[index] = res
           })
+          handlerParams.forEach(({ data, prop }) => {
+            data.forEach(([index, name]) => {
+              if (prop) {
+                args[index] = name ? req[prop][name] : req[prop]
+              } else {
+                args[index] = req[name as 'file' | 'files']
+              }
+            })
+          })
 
-          requestQueries.forEach(([index, name]) => {
-            args[index] = name ? req.query[name] : req.query
-          })
-          requestParams.forEach(([index, name]) => {
-            args[index] = name ? req.params[name] : req.params
-          })
-          requestBodies.forEach(([index, name]) => {
-            args[index] = name ? req.body[name] : req.body
-          })
           const result = handler(...args)
           if (!res.headersSent) {
             getPromiseResult(result)

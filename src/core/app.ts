@@ -67,8 +67,16 @@ export class Application {
     setGlobalPrefix(prefix)
   }
 
-  useGlobalMiddleware(middleware: MiddlewareCallback) {
-    this.app.use(middleware)
+  useGlobalMiddleware(...handlers: MiddlewareCallback[]): Express.Application
+  useGlobalMiddleware(
+    path: string,
+    ...handlers: MiddlewareCallback[]
+  ): Express.Application
+  useGlobalMiddleware(
+    path: string | MiddlewareCallback,
+    ...handlers: MiddlewareCallback[]
+  ) {
+    return this.app.use(path as MiddlewareCallback, ...handlers)
   }
 
   listen(port: number, callback?: () => void) {

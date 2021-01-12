@@ -15,3 +15,13 @@ export const RESPONSE_KEY = 'response_key'
 export const REQUEST_QUERY_KEY = 'request_query_key'
 export const REQUEST_PARAM_KEY = 'request_param_key'
 export const REQUEST_BODY_KEY = 'request_body_key'
+export const REQUEST_HEADER_KEY = 'request_header_key'
+export const REQUEST_UPLOADED_FILE_KEY = 'request_uploaded_file_key'
+
+export enum RequestProps {
+  Query = 'query',
+  Param = 'params',
+  Header = 'headers',
+  Body = 'body',
+  None = ''
+}
