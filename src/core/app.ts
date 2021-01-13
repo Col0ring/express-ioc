@@ -8,7 +8,7 @@ import {
   MiddlewareCallback,
   ApplicationOptions,
   ApplicationRouterOptions,
-  DatabaseConfig
+  DatabaseConfig,
 } from './type'
 import { loadFiles } from './utils'
 
@@ -16,16 +16,20 @@ export class Application {
   private app = express()
   private router: Router
   private connections: Connection | Connection[] | null = null
+  private options: ApplicationOptions
   constructor(options: ApplicationOptions = {}) {
-    this.initApplication(options)
+    this.options = options
   }
   async initApplication(options: ApplicationOptions = {}) {
-    const { dbConfig, ...routerOptions } = options
+    const { dbConfig, ...routerOptions } = Object.assign(
+      {},
+      this.options,
+      options
+    )
     if (dbConfig && typeof dbConfig === 'object') {
       await this.initDatabase(dbConfig)
     }
-
-    this.router = this.initRouter(routerOptions)
+    this.initRouter(routerOptions)
     this.initControllers()
   }
 
@@ -95,7 +99,6 @@ export class Application {
   enableCors(options?: CorsOptions) {
     this.useGlobalMiddleware(cors(options))
   }
-
   enableBodyParser() {
     this.useGlobalMiddleware(bodyParser.json())
     this.useGlobalMiddleware(bodyParser.urlencoded({ extended: false }))

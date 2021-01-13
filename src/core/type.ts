@@ -11,6 +11,7 @@ export type Method =
   | 'head'
 
 export type RequestValueType = [index: number, name?: string]
+export type ValidatorParamType = [index: number, type: any]
 
 export interface MiddlewareCallback {
   (req: Request, res: Response, next: NextFunction): void

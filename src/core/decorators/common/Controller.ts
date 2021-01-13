@@ -1,4 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
+import { plainToClass } from 'class-transformer'
+import { validate } from 'class-validator'
 import path from 'path'
 import { getPromiseResult } from '../../utils'
 import {
@@ -6,8 +8,10 @@ import {
   Method,
   Constructor,
   ApplicationRouterOptions,
-  RequestValueType
+  RequestValueType,
+  ValidatorParamType,
 } from '../../type'
+import { BadRequest } from '@/exceptions'
 import {
   INJECT_KEY,
   INJECTABLE_KEY,
@@ -21,7 +25,8 @@ import {
   POST_MIDDLEWARE_KEY,
   REQUEST_KEY,
   RESPONSE_KEY,
-  requestProps
+  VALIDATOR_KEY,
+  requestProps,
 } from '../constants'
 
 let router: Router | null = null
@@ -77,7 +82,7 @@ export function Controller(prefix = '/') {
       if (typeof controller[key] !== 'function') {
         return
       }
-      const currentPath = Reflect.getMetadata(PATH_KEY, controller, key)
+      const currentPath: string = Reflect.getMetadata(PATH_KEY, controller, key)
 
       const middleware: MiddlewareCallback[] =
         Reflect.getMetadata(MIDDLEWARE_KEY, controller, key) || []
@@ -86,7 +91,8 @@ export function Controller(prefix = '/') {
         Reflect.getMetadata(POST_MIDDLEWARE_KEY, controller, key) || []
       const exception =
         Reflect.getMetadata(EXCEPTION_KEY, controller, key) || (() => {})
-
+      const validatorParams: ValidatorParamType[] =
+        Reflect.getMetadata(VALIDATOR_KEY, controller, key) || []
       // http
       const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
       const requests: number[] =
@@ -99,7 +105,7 @@ export function Controller(prefix = '/') {
           return {
             data: (Reflect.getMetadata(propKey, controller, key) ||
               []) as RequestValueType[],
-            prop
+            prop,
           }
         }
       )
@@ -107,7 +113,7 @@ export function Controller(prefix = '/') {
       // fix the prefix
       const url = path.join('/' + globalPrefix, prefix, currentPath)
       const handler = controller[key].bind(controller)
-      const handlerWrapper = (
+      const handlerWrapper = async (
         req: Request,
         res: Response,
         next: NextFunction
@@ -129,6 +135,27 @@ export function Controller(prefix = '/') {
               }
             })
           })
+          for (const [index, type] of validatorParams) {
+            const types: Function[] = [String, Boolean, Number, Array, Object]
+            if (types.includes(type)) {
+              continue
+            }
+            const ins = plainToClass(type, args[index])
+            const errors = await validate(ins)
+            if (errors.length > 0) {
+              return next(
+                new BadRequest({
+                  message: errors
+                    .map((error) =>
+                      error.constraints
+                        ? Object.values(error.constraints)
+                        : error.constraints
+                    )
+                    .join(),
+                })
+              )
+            }
+          }
 
           const result = handler(...args)
           if (!res.headersSent) {

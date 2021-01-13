@@ -11,23 +11,24 @@ import {
   Req,
   Res,
   Post,
-  UploadedFile
+  UploadedFile,
+  Validator,
 } from '@/core'
 import { Success } from '@/exceptions'
-import { AppService } from '@/services/app.service'
+import { App2Service } from '@/services/app2.service'
 import { Example2Service } from '@/services/example2.service'
 import { authMiddleware } from '@/middleware/auth.middleware'
 import { fileMiddleware } from '@/middleware/file.middleware'
 import { LogException } from '../decorators/log.decorator'
 import { uploadConfig } from '@/config/upload'
-
+import { PhotoDto } from '@/dto/Photo.dto'
 @Controller()
 // controller exception capture
 @LogException()
 export class AppController {
   constructor(
     @Inject(Example2Service) private readonly Example2Service: Example2Service,
-    private readonly appService: AppService
+    private readonly app2Service: App2Service
   ) {}
 
   @Get()
@@ -55,14 +56,14 @@ export class AppController {
     fileMiddleware({
       method: {
         type: 'single',
-        fileName: 'file'
+        fileName: 'file',
       },
-      storage: uploadConfig.storage
+      storage: uploadConfig.storage,
     })
   )
   upload(@UploadedFile('file') file: Express.Multer.File) {
     return {
-      file
+      file,
     }
   }
   @Post('uploads')
@@ -70,32 +71,31 @@ export class AppController {
     fileMiddleware({
       method: {
         type: 'array',
-        fileName: 'file'
+        fileName: 'file',
       },
-      storage: uploadConfig.storage
+      storage: uploadConfig.storage,
     })
   )
   uploads(@UploadedFile('files') files: Express.Multer.File[]) {
     return {
-      files
+      files,
     }
   }
 
-  @Get('app')
+  @Post('app')
   // method exception capture
   @Exception()
   getHello(
-    @Req() req: Request,
-    @Query('name') name: string,
-    @Res() res: Response
+    @Validator() @Query('name') name: string,
+    @Validator() @Body() photo: PhotoDto
   ) {
-    return this.appService.getHello()
+    return '11'
   }
 
-  @Get('photos')
-  // method exception capture
-  @Exception()
-  getPhotos(req: Request, res: Response) {
-    return this.appService.getPhotos()
-  }
+  // @Get('photos')
+  // // method exception capture
+  // @Exception()
+  // getPhotos(req: Request, res: Response) {
+  //   return this.appService.getPhotos()
+  // }
 }
