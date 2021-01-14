@@ -354,12 +354,12 @@ ci-info@^2.0.0:
 
 class-transformer@^0.3.1:
   version "0.3.1"
-  resolved "http://bnpm.byted.org/class-transformer/-/class-transformer-0.3.1.tgz#ee681a5439ff2230fc57f5056412d3befa70d597"
+  resolved "https://registry.npm.taobao.org/class-transformer/download/class-transformer-0.3.1.tgz#ee681a5439ff2230fc57f5056412d3befa70d597"
   integrity sha1-7mgaVDn/IjD8V/UFZBLTvvpw1Zc=
 
 class-validator@^0.13.0:
   version "0.13.0"
-  resolved "http://bnpm.byted.org/class-validator/-/class-validator-0.13.0.tgz#87770a90e4f9ac1a928631ae58dc6920299052ff"
+  resolved "https://registry.npm.taobao.org/class-validator/download/class-validator-0.13.0.tgz#87770a90e4f9ac1a928631ae58dc6920299052ff"
   integrity sha1-h3cKkOT5rBqShjGuWNxpICmQUv8=
   dependencies:
     libphonenumber-js "^1.7.57"
@@ -1059,7 +1059,7 @@ latest-version@^5.0.0:
 
 libphonenumber-js@^1.7.57:
   version "1.9.7"
-  resolved "http://bnpm.byted.org/libphonenumber-js/-/libphonenumber-js-1.9.7.tgz#51c0a2b600f8d40ff7a65947fe2c1ff7f85268c1"
+  resolved "https://registry.npm.taobao.org/libphonenumber-js/download/libphonenumber-js-1.9.7.tgz#51c0a2b600f8d40ff7a65947fe2c1ff7f85268c1"
   integrity sha1-UcCitgD41A/3pllH/iwf9/hSaME=
 
 locate-path@^5.0.0:
@@ -1916,7 +1916,7 @@ utils-merge@1.0.1:
 
 validator@^13.1.1:
   version "13.5.2"
-  resolved "http://bnpm.byted.org/validator/-/validator-13.5.2.tgz#c97ae63ed4224999fb6f42c91eaca9567fe69a46"
+  resolved "https://registry.npm.taobao.org/validator/download/validator-13.5.2.tgz?cache=0&sync_timestamp=1607603024030&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvalidator%2Fdownload%2Fvalidator-13.5.2.tgz#c97ae63ed4224999fb6f42c91eaca9567fe69a46"
   integrity sha1-yXrmPtQiSZn7b0LJHqypVn/mmkY=
 
 vary@^1, vary@~1.1.2:
