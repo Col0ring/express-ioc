@@ -12,7 +12,7 @@ import {
   Res,
   Post,
   UploadedFile,
-  Validator,
+  Pipe
 } from '@/core'
 import { Success } from '@/exceptions'
 import { App2Service } from '@/services/app2.service'
@@ -22,6 +22,8 @@ import { fileMiddleware } from '@/middleware/file.middleware'
 import { LogException } from '../decorators/log.decorator'
 import { uploadConfig } from '@/config/upload'
 import { PhotoDto } from '@/dto/Photo.dto'
+import { ValidatorPipe } from '@/pipe/validator.pipe'
+import { IntegerPipe } from '@/pipe/Integer.pipe'
 @Controller()
 // controller exception capture
 @LogException()
@@ -56,14 +58,14 @@ export class AppController {
     fileMiddleware({
       method: {
         type: 'single',
-        fileName: 'file',
+        fileName: 'file'
       },
-      storage: uploadConfig.storage,
+      storage: uploadConfig.storage
     })
   )
   upload(@UploadedFile('file') file: Express.Multer.File) {
     return {
-      file,
+      file
     }
   }
   @Post('uploads')
@@ -71,25 +73,26 @@ export class AppController {
     fileMiddleware({
       method: {
         type: 'array',
-        fileName: 'file',
+        fileName: 'file'
       },
-      storage: uploadConfig.storage,
+      storage: uploadConfig.storage
     })
   )
   uploads(@UploadedFile('files') files: Express.Multer.File[]) {
     return {
-      files,
+      files
     }
   }
 
   @Post('app')
   // method exception capture
   @Exception()
+  @Pipe(new ValidatorPipe())
   getHello(
-    @Validator() @Query('name') name: string,
-    @Validator() @Body() photo: PhotoDto
+    @Query('name') name: string,
+    @Body(new IntegerPipe()) photo: PhotoDto
   ) {
-    return '11'
+    return photo
   }
 
   // @Get('photos')

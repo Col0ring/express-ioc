@@ -1,4 +1,9 @@
-import { RequestValueType } from '../../type'
+import {
+  PipeItem,
+  PipeTransform,
+  RequestValueType,
+  TargetParamFunction
+} from '../../type'
 import {
   REQUEST_BODY_KEY,
   REQUEST_HEADER_KEY,
@@ -6,18 +11,36 @@ import {
   REQUEST_UPLOADED_FILE_KEY,
   REQUEST_QUERY_KEY
 } from '../constants'
+import { Pipe } from '../common/Pipe'
 
 function getRequestPropsDecorator(propKey: string) {
-  return function (name?: string) {
+  function requestPropsDecorator(
+    name?: string,
+    ...pipes: PipeTransform[]
+  ): TargetParamFunction
+  function requestPropsDecorator(...pipes: PipeTransform[]): TargetParamFunction
+  function requestPropsDecorator(
+    name?: string | PipeTransform,
+    ...pipes: PipeTransform[]
+  ): TargetParamFunction {
     return function (target: any, methodKey: string, index: number) {
       if (methodKey) {
         const metadataValue: RequestValueType[] =
           Reflect.getMetadata(propKey, target) || []
-        metadataValue.push([index, name])
+        if (typeof name === 'string') {
+          Pipe(...pipes)(target, methodKey, index)
+          metadataValue.push([index, name])
+        } else {
+          if (name) {
+            Pipe(name, ...pipes)(target, methodKey, index)
+          }
+          metadataValue.push([index, undefined])
+        }
         Reflect.defineMetadata(propKey, metadataValue, target, methodKey)
       }
     }
   }
+  return requestPropsDecorator
 }
 
 export const Body = getRequestPropsDecorator(REQUEST_BODY_KEY)

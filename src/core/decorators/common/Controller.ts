@@ -1,6 +1,4 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import { plainToClass } from 'class-transformer'
-import { validate } from 'class-validator'
 import path from 'path'
 import { getPromiseResult } from '../../utils'
 import {
@@ -9,9 +7,8 @@ import {
   Constructor,
   ApplicationRouterOptions,
   RequestValueType,
-  ValidatorParamType,
+  PipeItem
 } from '../../type'
-import { BadRequest } from '@/exceptions'
 import {
   INJECT_KEY,
   INJECTABLE_KEY,
@@ -25,8 +22,8 @@ import {
   POST_MIDDLEWARE_KEY,
   REQUEST_KEY,
   RESPONSE_KEY,
-  VALIDATOR_KEY,
   requestProps,
+  PIPE_KEY
 } from '../constants'
 
 let router: Router | null = null
@@ -91,8 +88,8 @@ export function Controller(prefix = '/') {
         Reflect.getMetadata(POST_MIDDLEWARE_KEY, controller, key) || []
       const exception =
         Reflect.getMetadata(EXCEPTION_KEY, controller, key) || (() => {})
-      const validatorParams: ValidatorParamType[] =
-        Reflect.getMetadata(VALIDATOR_KEY, controller, key) || []
+      const pipes: PipeItem[] =
+        Reflect.getMetadata(PIPE_KEY, controller, key) || []
       // http
       const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
       const requests: number[] =
@@ -105,7 +102,7 @@ export function Controller(prefix = '/') {
           return {
             data: (Reflect.getMetadata(propKey, controller, key) ||
               []) as RequestValueType[],
-            prop,
+            prop
           }
         }
       )
@@ -126,6 +123,7 @@ export function Controller(prefix = '/') {
           responses.forEach((index) => {
             args[index] = res
           })
+
           handlerRequestParams.forEach(({ data, prop }) => {
             data.forEach(([index, name]) => {
               if (prop) {
@@ -135,28 +133,19 @@ export function Controller(prefix = '/') {
               }
             })
           })
-          for (const [index, type] of validatorParams) {
-            const types: Function[] = [String, Boolean, Number, Array, Object]
-            if (types.includes(type)) {
-              continue
-            }
-            const ins = plainToClass(type, args[index])
-            const errors = await validate(ins)
-            if (errors.length > 0) {
-              return next(
-                new BadRequest({
-                  message: errors
-                    .map((error) =>
-                      error.constraints
-                        ? Object.values(error.constraints)
-                        : error.constraints
-                    )
-                    .join(),
+          for (let { pipe, providers, index } of pipes) {
+            if (index === -1) {
+              for (let i = 0; i < args.length; i++) {
+                args[i] = await pipe.transform(args[i], {
+                  metatype: providers[i]
                 })
-              )
+              }
+            } else {
+              args[index] = await pipe.transform(args[index], {
+                metatype: providers[0]
+              })
             }
           }
-
           const result = handler(...args)
           if (!res.headersSent) {
             getPromiseResult(result)
@@ -165,14 +154,12 @@ export function Controller(prefix = '/') {
                 next()
               })
               .catch((err) => {
-                next()
                 next(err)
               })
           } else {
             next()
           }
         } catch (err) {
-          next()
           next(err)
         }
       }

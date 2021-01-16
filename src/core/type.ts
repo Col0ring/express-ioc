@@ -10,8 +10,27 @@ export type Method =
   | 'options'
   | 'head'
 
+export type TargetParamFunction = (
+  target: any,
+  methodKey: string,
+  index: number
+) => void
+
+export interface ArgumentMetadata {
+  readonly metatype?: any
+  readonly data?: string
+}
+export interface PipeTransform<T = any, R = any> {
+  transform(value: T, metadata: ArgumentMetadata): R
+}
+
+export interface PipeItem {
+  pipe: PipeTransform
+  providers: any[]
+  index: number
+}
+
 export type RequestValueType = [index: number, name?: string]
-export type ValidatorParamType = [index: number, type: any]
 
 export interface MiddlewareCallback {
   (req: Request, res: Response, next: NextFunction): void
