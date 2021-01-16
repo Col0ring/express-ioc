@@ -24,6 +24,7 @@ import { uploadConfig } from '@/config/upload'
 import { PhotoDto } from '@/dto/Photo.dto'
 import { ValidatorPipe } from '@/pipe/validator.pipe'
 import { IntegerPipe } from '@/pipe/Integer.pipe'
+import { signToken } from '@/utils/auth'
 @Controller()
 // controller exception capture
 @LogException()
@@ -32,6 +33,14 @@ export class AppController {
     @Inject(Example2Service) private readonly Example2Service: Example2Service,
     private readonly app2Service: App2Service
   ) {}
+
+  @Post('/login')
+  login(@Body() body: any) {
+    const token = signToken(body)
+    return {
+      token
+    }
+  }
 
   @Get()
   @Middleware((req, res, next) => {
