@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsInt, IsNotEmpty, IsString } from 'class-validator'
 
-export class PostCreateDto {
+export class PostEditDto {
   @IsString({
     message: 'Please input correct title'
   })
@@ -19,4 +19,9 @@ export class PostCreateDto {
     message: "content can't be empty"
   })
   content: string
+
+  @IsInt({
+    message: 'the views of post are wrong'
+  })
+  views: number
 }

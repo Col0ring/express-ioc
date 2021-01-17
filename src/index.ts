@@ -5,11 +5,11 @@ import { dbConfig } from '@/config/db'
 import { accessLogConfig } from '@/config/logs'
 import { staticMiddleware } from './middleware/static.middleware'
 import { logMiddleware } from './middleware/log.middleware'
-// const app = new Application({
-//   dbConfig
-// })
+const app = new Application({
+  dbConfig
+})
 
-const app = new Application()
+// const app = new Application()
 app.enableBodyParser()
 app.setGlobalPrefix('/api')
 app.useGlobalMiddleware(staticMiddleware('public'))

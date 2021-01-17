@@ -26,7 +26,7 @@ function getRequestPropsDecorator<T extends string>(propKey: string) {
     return function (target: any, methodKey: string, index: number) {
       if (methodKey) {
         const metadataValue: RequestValueType[] =
-          Reflect.getMetadata(propKey, target) || []
+          Reflect.getMetadata(propKey, target, methodKey) || []
         if (typeof name === 'string') {
           Pipe(...pipes)(target, methodKey, index)
           metadataValue.push([index, name])

@@ -36,17 +36,17 @@ export function Pipe(...pipes: PipeTransform[]) {
     } else {
       for (const key in target.prototype) {
         const pipeItems: PipeItem[] =
-          Reflect.getMetadata(PIPE_KEY, target, key) || []
+          Reflect.getMetadata(PIPE_KEY, target.prototype, key) || []
         // 获取所有注入的服务
         const providers: any[] =
-          Reflect.getMetadata('design:paramtypes', target, key) || []
+          Reflect.getMetadata('design:paramtypes', target.prototype, key) || []
         Reflect.defineMetadata(
           PIPE_KEY,
           [
             ...pipeItems,
             ...pipes.map<PipeItem>((pipe) => ({ pipe, providers, index: -1 }))
           ],
-          target,
+          target.prototype,
           key
         )
       }
