@@ -1,5 +1,5 @@
 import { MiddlewareCallback } from '@/core'
-import { UnAuthorized } from '@/exceptions'
+import { UnAuthorized } from '@/exception'
 import { verifyToken } from '@/utils/auth'
 export const authMiddleware: MiddlewareCallback = (req, res, next) => {
   try {
@@ -9,6 +9,8 @@ export const authMiddleware: MiddlewareCallback = (req, res, next) => {
       if (user && user.id) {
         return next()
       }
+    } else {
+      throw new UnAuthorized()
     }
   } catch (error) {
     throw new UnAuthorized({

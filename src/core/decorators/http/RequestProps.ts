@@ -13,14 +13,14 @@ import {
 } from '../constants'
 import { Pipe } from '../common/Pipe'
 
-function getRequestPropsDecorator(propKey: string) {
+function getRequestPropsDecorator<T extends string>(propKey: string) {
   function requestPropsDecorator(
-    name?: string,
+    name?: T,
     ...pipes: PipeTransform[]
   ): TargetParamFunction
   function requestPropsDecorator(...pipes: PipeTransform[]): TargetParamFunction
   function requestPropsDecorator(
-    name?: string | PipeTransform,
+    name?: T | PipeTransform,
     ...pipes: PipeTransform[]
   ): TargetParamFunction {
     return function (target: any, methodKey: string, index: number) {
@@ -47,4 +47,6 @@ export const Body = getRequestPropsDecorator(REQUEST_BODY_KEY)
 export const Query = getRequestPropsDecorator(REQUEST_QUERY_KEY)
 export const Param = getRequestPropsDecorator(REQUEST_PARAM_KEY)
 export const Header = getRequestPropsDecorator(REQUEST_HEADER_KEY)
-export const UploadedFile = getRequestPropsDecorator(REQUEST_UPLOADED_FILE_KEY)
+export const UploadedFile = getRequestPropsDecorator<'file' | 'files'>(
+  REQUEST_UPLOADED_FILE_KEY
+)

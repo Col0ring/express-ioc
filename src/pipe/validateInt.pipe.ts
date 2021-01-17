@@ -1,14 +1,14 @@
 import { PipeTransform } from '@/core'
-import { BadRequest } from '@/exceptions'
+import { BadRequest } from '@/exception'
 
-export class IntegerPipe implements PipeTransform {
+export class ValidatorIntPipe implements PipeTransform {
   async transform(value: any) {
     const num = +value
     if (Number.isNaN(num)) {
       throw new BadRequest({
-        message: '应传入整形'
+        message: 'Please input a integer'
       })
     }
-    return value
+    return num
   }
 }

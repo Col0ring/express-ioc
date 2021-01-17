@@ -1,7 +1,7 @@
 import { validate } from 'class-validator'
 import { plainToClass } from 'class-transformer'
 import { PipeTransform, ArgumentMetadata } from '@/core'
-import { BadRequest } from '@/exceptions'
+import { BadRequest } from '@/exception'
 
 export class ValidatorPipe implements PipeTransform {
   async transform(value: any, { metatype }: ArgumentMetadata) {

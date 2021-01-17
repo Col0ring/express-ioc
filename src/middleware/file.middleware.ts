@@ -1,7 +1,7 @@
 import { NextFunction } from 'express'
 import multer from 'multer'
 import { MiddlewareCallback } from '@/core'
-import { BadRequest } from '@/exceptions'
+import { BadRequest } from '@/exception'
 interface SingleType {
   type: 'single'
   fileName: string

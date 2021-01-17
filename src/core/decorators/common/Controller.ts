@@ -77,9 +77,12 @@ export function Controller(prefix = '/') {
 
     for (const key in target.prototype) {
       if (typeof controller[key] !== 'function') {
-        return
+        continue
       }
       const currentPath: string = Reflect.getMetadata(PATH_KEY, controller, key)
+      if (typeof currentPath === 'undefined') {
+        continue
+      }
 
       const middleware: MiddlewareCallback[] =
         Reflect.getMetadata(MIDDLEWARE_KEY, controller, key) || []

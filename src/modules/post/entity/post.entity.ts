@@ -1,24 +1,21 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 @Entity()
-export class Photo {
+export class PostEntity {
   @PrimaryGeneratedColumn()
   id: number
 
   @Column({
     length: 100
   })
-  name: string
+  title: string
 
   @Column('text')
   description: string
 
-  @Column()
-  filename: string
+  @Column('text')
+  content: string
 
-  @Column('double')
+  @Column('int')
   views: number
-
-  @Column()
-  isPublished: boolean
 }

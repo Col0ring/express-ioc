@@ -8,7 +8,7 @@ import {
   MiddlewareCallback,
   ApplicationOptions,
   ApplicationRouterOptions,
-  DatabaseConfig,
+  DatabaseConfig
 } from './type'
 import { loadFiles } from './utils'
 
@@ -39,8 +39,10 @@ export class Application {
     return router
   }
   private initControllers() {
-    const parentPath = path.resolve(__dirname, '../controllers')
-    loadFiles(parentPath)
+    const parentPath = path.resolve(__dirname, '..')
+    loadFiles(parentPath, {
+      include: /\.controller\.ts$/i
+    })
   }
 
   private closeConnection() {
