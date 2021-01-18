@@ -2,7 +2,7 @@ import { Injectable, InjectRepository } from '@/core'
 import { Repository } from 'typeorm'
 import { PostEntity } from './entity/post.entity'
 import { PostCreateDto } from './dto/create.dto'
-import { PostEditDto } from './dto/edit'
+import { PostEditDto } from './dto/edit.dto'
 
 @Injectable()
 export class PostService {

@@ -42,10 +42,16 @@ export interface ApplicationRouterOptions extends RouterOptions {
   prefix?: string
 }
 
+export interface ApplicationControllerOptions {
+  include?: RegExp
+  exclude?: RegExp
+}
+
 export type DatabaseConfig = ConnectionOptions | ConnectionOptions[]
 
 export type EntityClassOrSchema = Function | EntitySchema
 
 export interface ApplicationOptions extends ApplicationRouterOptions {
   dbConfig?: DatabaseConfig
+  controllerConfig?: ApplicationControllerOptions
 }

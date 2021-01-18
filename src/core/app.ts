@@ -8,7 +8,8 @@ import {
   MiddlewareCallback,
   ApplicationOptions,
   ApplicationRouterOptions,
-  DatabaseConfig
+  DatabaseConfig,
+  ApplicationControllerOptions
 } from './type'
 import { loadFiles } from './utils'
 
@@ -21,7 +22,7 @@ export class Application {
     this.options = options
   }
   async initApplication(options: ApplicationOptions = {}) {
-    const { dbConfig, ...routerOptions } = Object.assign(
+    const { dbConfig, controllerConfig, ...routerOptions } = Object.assign(
       {},
       this.options,
       options
@@ -30,7 +31,7 @@ export class Application {
       await this.initDatabase(dbConfig)
     }
     this.initRouter(routerOptions)
-    this.initControllers()
+    this.initControllers(controllerConfig)
   }
 
   private initRouter(options?: ApplicationRouterOptions) {
@@ -38,11 +39,18 @@ export class Application {
     this.useGlobalMiddleware(router)
     return router
   }
-  private initControllers() {
+  private initControllers(options?: ApplicationControllerOptions) {
     const parentPath = path.resolve(__dirname, '..')
-    loadFiles(parentPath, {
-      include: /\.controller\.ts$/i
-    })
+    loadFiles(
+      parentPath,
+      Object.assign(
+        {},
+        {
+          include: /\.controller\.ts$/i
+        },
+        options
+      )
+    )
   }
 
   private closeConnection() {
