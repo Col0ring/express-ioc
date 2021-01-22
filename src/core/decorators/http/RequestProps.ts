@@ -1,5 +1,4 @@
 import {
-  PipeItem,
   PipeTransform,
   RequestValueType,
   TargetParamFunction

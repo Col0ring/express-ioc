@@ -136,7 +136,7 @@ export function Controller(prefix = '/') {
               }
             })
           })
-          for (let { pipe, providers, index } of pipes) {
+          for (const { pipe, providers, index } of pipes) {
             if (index === -1) {
               for (let i = 0; i < args.length; i++) {
                 args[i] = await pipe.transform(args[i], {
