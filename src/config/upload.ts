@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
     })
   }
 })
-multer.memoryStorage()
 
 export const uploadConfig = {
   dest: 'uploads',
