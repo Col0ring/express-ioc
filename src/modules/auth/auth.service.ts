@@ -16,4 +16,11 @@ export class AuthService {
       message: 'username or password is wrong'
     })
   }
+
+  getUserInfo(id: number) {
+    return {
+      id,
+      email: 'xxx@xxx.com'
+    }
+  }
 }

@@ -9,7 +9,7 @@ export const accessLogConfig: LogOptions = __DEV__
     }
   : {
       type: 'file',
-      dir: path.join(__dirname, '../logs'),
+      dir: path.join(__dirname, '../../logs'),
       fileName: 'access.log'
     }
 

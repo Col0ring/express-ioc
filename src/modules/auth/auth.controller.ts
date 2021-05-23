@@ -1,4 +1,14 @@
-import { Body, Controller, Exception, Pipe, Post } from '@/core'
+import {
+  Body,
+  Controller,
+  Exception,
+  Get,
+  Middleware,
+  Pipe,
+  Post,
+  Req
+} from '@/core'
+import { authMiddleware } from '@/middleware/auth.middleware'
 import { ValidatorPipe } from '@/pipe/validator.pipe'
 import { AuthService } from './auth.service'
 import { LoginDto } from './dto/login.dto'
@@ -14,5 +24,11 @@ export class AuthController {
     return {
       token
     }
+  }
+
+  @Get('/getUserInfo')
+  @Middleware(authMiddleware)
+  getUserInfo(@Req() req: any) {
+    return req.user
   }
 }

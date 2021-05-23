@@ -15,6 +15,7 @@ app.useGlobalMiddleware(staticMiddleware('public'))
 app.useGlobalMiddleware('/uploads', staticMiddleware('uploads'))
 app.useGlobalMiddleware(logMiddleware(accessLogConfig))
 
+// TODO glob
 app.initApplication({
   controllerConfig: {
     exclude: /post\.controller\.ts$/i
