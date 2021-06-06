@@ -1,7 +1,6 @@
 import path from 'path'
 import { LogOptions } from '@/middleware/log.middleware'
-
-const __DEV__ = process.env.NODE_ENV === 'production' ? false : true
+import { __DEV__ } from './env'
 
 export const accessLogConfig: LogOptions = __DEV__
   ? {

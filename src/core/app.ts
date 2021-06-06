@@ -12,6 +12,7 @@ import {
   ApplicationControllerOptions
 } from './type'
 import { loadFiles } from './utils'
+import { __DEV__ } from '@/config/env'
 
 export class Application {
   private app = express()
@@ -46,7 +47,7 @@ export class Application {
       Object.assign(
         {},
         {
-          include: /\.controller\.ts$/i
+          include: __DEV__ ? /\.controller\.ts$/i : /\.controller\.js$/i
         },
         options
       )
