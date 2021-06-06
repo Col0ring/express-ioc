@@ -1,5 +1,5 @@
 // alias
-import 'module-alias/register'
+import './config/alias'
 import { Application } from '@/core'
 import { dbConfig } from '@/config/db'
 import { accessLogConfig } from '@/config/logs'
@@ -18,7 +18,7 @@ app.useGlobalMiddleware(logMiddleware(accessLogConfig))
 // TODO glob
 app.initApplication({
   controllerConfig: {
-    exclude: /post\.controller\.ts$/i
+    exclude: /post\.controller\.(t|j)s$/i
   }
 })
 app.listen(3000, () => {
