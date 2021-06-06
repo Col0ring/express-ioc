@@ -7,7 +7,8 @@ import {
   Constructor,
   ApplicationRouterOptions,
   RequestValueType,
-  PipeItem
+  PipeItem,
+  ContextItem
 } from '../../type'
 import {
   INJECT_KEY,
@@ -23,7 +24,8 @@ import {
   REQUEST_KEY,
   RESPONSE_KEY,
   requestProps,
-  PIPE_KEY
+  PIPE_KEY,
+  RequestProps
 } from '../constants'
 
 let router: Router | null = null
@@ -95,9 +97,9 @@ export function Controller(prefix = '/') {
         Reflect.getMetadata(PIPE_KEY, controller, key) || []
       // http
       const method: Method = Reflect.getMetadata(METHOD_KEY, controller, key)
-      const requests: number[] =
+      const requests: ContextItem[] =
         Reflect.getMetadata(REQUEST_KEY, controller, key) || []
-      const responses: number[] =
+      const responses: ContextItem[] =
         Reflect.getMetadata(RESPONSE_KEY, controller, key) || []
 
       const handlerRequestParams = requestProps.map(
@@ -120,19 +122,19 @@ export function Controller(prefix = '/') {
       ) => {
         try {
           const args: any[] = []
-          requests.forEach((index) => {
-            args[index] = req
+          requests.forEach(({ index, prop }) => {
+            args[index] = prop ? req[prop as keyof typeof req] : req
           })
-          responses.forEach((index) => {
-            args[index] = res
+          responses.forEach(({ index, prop }) => {
+            args[index] = prop ? res[prop as keyof typeof res] : res
           })
 
           handlerRequestParams.forEach(({ data, prop }) => {
             data.forEach(([index, name]) => {
-              if (prop) {
-                args[index] = name ? req[prop][name] : req[prop]
-              } else {
+              if (prop === RequestProps.File) {
                 args[index] = req[name as 'file' | 'files']
+              } else {
+                args[index] = name ? req[prop][name] : req[prop]
               }
             })
           })

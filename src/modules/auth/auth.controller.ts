@@ -8,6 +8,7 @@ import {
   Post,
   Req
 } from '@/core'
+import { User } from '@/decorator/user.decorator'
 import { authMiddleware } from '@/middleware/auth.middleware'
 import { ValidatorPipe } from '@/pipe/validator.pipe'
 import { AuthService } from './auth.service'
@@ -28,7 +29,7 @@ export class AuthController {
 
   @Get('/getUserInfo')
   @Middleware(authMiddleware)
-  getUserInfo(@Req() req: any) {
-    return req.user
+  getUserInfo(@User() user: any) {
+    return user
   }
 }

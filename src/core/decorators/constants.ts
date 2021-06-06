@@ -24,7 +24,7 @@ export enum RequestProps {
   Param = 'params',
   Header = 'headers',
   Body = 'body',
-  None = ''
+  File = 'file'
 }
 
 export const requestProps = [
@@ -33,5 +33,5 @@ export const requestProps = [
   { key: REQUEST_PARAM_KEY, prop: RequestProps.Param },
   { key: REQUEST_BODY_KEY, prop: RequestProps.Body },
   { key: REQUEST_HEADER_KEY, prop: RequestProps.Header },
-  { key: REQUEST_UPLOADED_FILE_KEY, prop: RequestProps.None }
+  { key: REQUEST_UPLOADED_FILE_KEY, prop: RequestProps.File }
 ]

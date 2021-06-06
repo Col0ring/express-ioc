@@ -6,6 +6,7 @@ export const authMiddleware: MiddlewareCallback = (req, res, next) => {
     if (req.headers.authorization) {
       const token = req.headers.authorization.split(' ')[1]
       const user: any = verifyToken(token)
+      // from db ?
       if (user && user.id) {
         // save user
         ;(req as any).user = user

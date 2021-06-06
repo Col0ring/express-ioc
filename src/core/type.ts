@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, RouterOptions } from 'express'
 import { ConnectionOptions, EntitySchema } from 'typeorm'
+export type Key = string | number | symbol
 export type Method =
   | 'all'
   | 'get'
@@ -22,6 +23,11 @@ export interface ArgumentMetadata {
 }
 export interface PipeTransform<T = any, R = any> {
   transform(value: T, metadata: ArgumentMetadata): R
+}
+
+export interface ContextItem {
+  index: number
+  prop?: Key
 }
 
 export interface PipeItem {
